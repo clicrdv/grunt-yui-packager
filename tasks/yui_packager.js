@@ -10,41 +10,48 @@
 
 module.exports = function(grunt) {
 
-  // Please see the Grunt documentation for more information regarding task
-  // creation: http://gruntjs.com/creating-tasks
+  /**
+   * Options :
+   *  - packageName  : String
+   *  - dest         : String
+   *  - modules      : [array of main modules]
+   *  - loaders      : [array of loaders (relative) path]
+   *  - langs        : [array]
+   *  - splitLangs   : Boolean
+   *  - saveJammit   : Boolean
+   *  - setup        : Function
+   */
+  grunt.registerMultiTask('yui-packager', 'Package YUI projects', function() {
 
-  grunt.registerMultiTask('yui_packager', 'Package YUI projects', function() {
-    // Merge task-specific and/or target-specific options with these defaults.
     var options = this.options({
-      punctuation: '.',
-      separator: ', '
+      splitLangs: true,
+      saveJammit: false
     });
 
-    // Iterate over all specified file groups.
-    this.files.forEach(function(f) {
-      // Concat specified files.
-      var src = f.src.filter(function(filepath) {
-        // Warn on and remove invalid source files (if nonull was set).
-        if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
-          return false;
-        } else {
-          return true;
-        }
-      }).map(function(filepath) {
-        // Read file source.
-        return grunt.file.read(filepath);
-      }).join(grunt.util.normalizelf(options.separator));
+    var deps = require('yui-deps');
 
-      // Handle options.
-      src += options.punctuation;
+    function setup (Y, config) {
+       config.groups.inputex.base = '/javascripts/lib/inputex-3.2.0/build/';
+       config.base = '/javascripts/lib/yui-3.9.1/';
+       console.log('setup', config);
+    }
 
-      // Write the destination file.
-      grunt.file.write(f.dest, src);
-
-      // Print a success message.
-      grunt.log.writeln('File "' + f.dest + '" created.');
+    var packages = deps({
+       YUI:         this.data.yui,
+       langs:       this.data.langs,
+       loaders:     this.data.loaders,
+       require:     this.data.require,
+       splitLangs:  this.data.splitLangs,
+       packageName: this.data.packageName,
+       setup:       this.data.setup
     });
+
+    console.log(packages);
+
+    if (this.data.saveJammit) {
+      // TODO
+    }
+
   });
 
 };
