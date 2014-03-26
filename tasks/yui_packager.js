@@ -30,12 +30,6 @@ module.exports = function(grunt) {
 
     var deps = require('yui-deps');
 
-    function setup (Y, config) {
-       config.groups.inputex.base = '/javascripts/lib/inputex-3.2.0/build/';
-       config.base = '/javascripts/lib/yui-3.9.1/';
-       console.log('setup', config);
-    }
-
     var packages = deps({
        YUI:         this.data.yui,
        langs:       this.data.langs,
@@ -46,10 +40,23 @@ module.exports = function(grunt) {
        setup:       this.data.setup
     });
 
-    console.log(packages);
+    if (this.data.afterResolve) {
+      this.data.afterResolve(packages);
+    }
 
     if (this.data.saveJammit) {
-      // TODO
+      var yaml = require('js-yaml');
+      var assets = yaml.safeLoad(grunt.file.read(this.data.saveJammit));
+
+      Object.keys(packages['javascripts']).forEach(function (groupName) {
+         assets['javascripts'][groupName] = packages['javascripts'][groupName];
+      });
+
+      Object.keys(packages['stylesheets']).forEach(function (groupName) {
+         assets['stylesheets'][groupName] = packages['stylesheets'][groupName];
+      });
+
+      grunt.file.write(this.data.saveJammit, yaml.safeDump(assets));
     }
 
   });
