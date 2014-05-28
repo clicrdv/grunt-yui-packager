@@ -36,6 +36,7 @@ module.exports = function(grunt) {
          loaders:       this.data.loaders,
          require:       this.data.require,
          use:           this.data.use,
+         ignore:        this.data.ignore,
          splitLangs:    this.data.splitLangs,
          packageName:   this.data.packageName,
          setup:         this.data.setup
