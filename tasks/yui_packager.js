@@ -30,15 +30,18 @@ module.exports = function(grunt) {
 
     var deps = require('yui-deps');
 
-    var packages = deps({
-       YUI:         this.data.yui,
-       langs:       this.data.langs,
-       loaders:     this.data.loaders,
-       require:     this.data.require,
-       splitLangs:  this.data.splitLangs,
-       packageName: this.data.packageName,
-       setup:       this.data.setup
-    });
+      var packages = deps({
+         YUI:           this.data.yui,
+         langs:         this.data.langs,
+         loaders:       this.data.loaders,
+         require:       this.data.require,
+         use:           this.data.use,
+         splitLangs:    this.data.splitLangs,
+         packageName:   this.data.packageName,
+         setup:         this.data.setup
+      });
+
+      console.log(this.data.loaders);
 
     if (this.data.afterResolve) {
       this.data.afterResolve(packages);
